@@ -2,6 +2,7 @@ package certstream
 
 import (
 	"time"
+
 	"github.com/gorilla/websocket"
 	"github.com/jmoiron/jsonq"
 	"github.com/pkg/errors"
@@ -30,7 +31,9 @@ func CertStreamEventStream(skipHeartbeats bool) (chan jsonq.JsonQuery, chan erro
 				if err != nil {
 					errStream <- errors.Wrap(err, "Error decoding json frame!")
 				}
-
+				if v == nil {
+					continue
+				}
 				jq := jsonq.NewQuery(v)
 
 				res, err := jq.String("message_type")
@@ -49,4 +52,3 @@ func CertStreamEventStream(skipHeartbeats bool) (chan jsonq.JsonQuery, chan erro
 
 	return outputStream, errStream
 }
-
